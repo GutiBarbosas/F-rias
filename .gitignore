@@ -1,0 +1,19 @@
+# Sistema / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Arquivos temporários do Excel e planilhas de origem (contêm dados pessoais)
+~$*.xls*
+*.xlsx
+*.xls
+*.csv
+
+# Node / Python (caso sejam usados nas próximas etapas)
+node_modules/
+__pycache__/
+*.pyc
+.venv/
+.env
+*.log

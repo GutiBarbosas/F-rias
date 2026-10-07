@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dashboard de Férias</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <header class="topo">
+    <div class="topo__conteudo">
+      <h1>📅 Dashboard de Férias</h1>
+      <p>Acompanhamento dos períodos aquisitivos e prazos para concessão de férias</p>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="indicadores" id="indicadores" aria-labelledby="indicadores-titulo">
+      <div class="indicadores__cab">
+        <h2 id="indicadores-titulo">Indicadores</h2>
+        <span id="data-ref" class="data-ref"></span>
+      </div>
+      <div class="cards">
+        <div class="card"><span class="card__rotulo">Colaboradores</span><strong class="card__valor" id="ind-colaboradores">—</strong></div>
+        <div class="card"><span class="card__rotulo">Períodos aquisitivos</span><strong class="card__valor" id="ind-periodos">—</strong></div>
+        <button type="button" class="card card--vencidas" data-situacao="Vencidas" aria-pressed="false"><span class="card__rotulo">Vencidas</span><strong class="card__valor">—</strong></button>
+        <button type="button" class="card card--ate30" data-situacao="Até 30 dias" aria-pressed="false"><span class="card__rotulo">Até 30 dias</span><strong class="card__valor">—</strong></button>
+        <button type="button" class="card card--d31a60" data-situacao="31 a 60 dias" aria-pressed="false"><span class="card__rotulo">31 a 60 dias</span><strong class="card__valor">—</strong></button>
+        <button type="button" class="card card--mais60" data-situacao="Mais de 60 dias" aria-pressed="false"><span class="card__rotulo">Mais de 60 dias</span><strong class="card__valor">—</strong></button>
+        <div class="card card--conflito"><span class="card__rotulo">Conflitos de programação</span><strong class="card__valor" id="ind-conflitos">—</strong></div>
+      </div>
+      <div class="card card--previsao" id="card-previsao">
+        <span class="card__rotulo">Previsão bruta total</span>
+        <strong class="card__valor" id="ind-previsao">—</strong>
+        <span class="card__nota" id="ind-previsao-nota"></span>
+        <span class="card__nota">Estimativa bruta (salário + 1/3). Não é valor líquido nem valor da folha: sem INSS, IRRF, médias, horas extras, adicionais ou comissões. Acompanha os filtros.</span>
+      </div>
+    </section>
+
+    <section class="tabela-secao conflitos" id="conflitos" aria-labelledby="conflitos-titulo">
+      <h2 id="conflitos-titulo">⚠️ Conflitos de programação</h2>
+      <p class="contagem">Mesma loja + mesma função + mesmo mês desejado (<code>DESEJO</code>). Alerta de planejamento — acompanha os filtros.</p>
+      <div class="tabela-rolagem tabela-rolagem--resumo" id="conflitos-rolagem" hidden>
+        <table class="resumo">
+          <thead>
+            <tr>
+              <th scope="col">Loja</th>
+              <th scope="col">Função</th>
+              <th scope="col">Mês desejado</th>
+              <th scope="col">Colaboradores</th>
+              <th scope="col">Quantidade</th>
+            </tr>
+          </thead>
+          <tbody id="conflitos-corpo"></tbody>
+        </table>
+      </div>
+      <p id="conflitos-vazio" class="vazio vazio--conflitos">Nenhum conflito de programação encontrado.</p>
+    </section>
+
+    <section class="filtros" id="filtros" aria-label="Busca e filtros">
+      <div class="campo campo--busca">
+        <label for="busca">Colaborador</label>
+        <input id="busca" type="search" placeholder="Buscar colaborador..." autocomplete="off">
+      </div>
+      <div class="campo"><label for="f-loja">Loja</label><select id="f-loja"></select></div>
+      <div class="campo"><label for="f-funcao">Função</label><select id="f-funcao"></select></div>
+      <div class="campo"><label for="f-ano">Ano do limite</label><select id="f-ano"></select></div>
+      <div class="campo"><label for="f-situacao">Situação</label><select id="f-situacao"></select></div>
+      <div class="campo"><label for="f-mes">Mês</label><select id="f-mes"></select></div>
+      <div class="campo"><label for="f-conflito">Conflito</label>
+        <select id="f-conflito"><option value="">Todos</option><option value="com">Com conflito</option><option value="sem">Sem conflito</option></select>
+      </div>
+      <button id="limpar" class="btn" type="button">Limpar filtros</button>
+    </section>
+
+    <section class="tabela-secao" aria-labelledby="tabela-titulo">
+      <h2 id="tabela-titulo">Tabela de férias</h2>
+      <p id="contagem" class="contagem" aria-live="polite"></p>
+      <p class="contagem contagem--nota"><strong>Previsão bruta — salário + 1/3.</strong> Estimativa individual por período aquisitivo; ainda sem INSS, IRRF, médias, horas extras, adicionais ou comissões.</p>
+      <div class="tabela-rolagem">
+        <table class="tabela">
+          <thead>
+            <tr>
+              <th scope="col">Colaborador</th>
+              <th scope="col">Loja</th>
+              <th scope="col">Função</th>
+              <th scope="col">Período aquisitivo</th>
+              <th scope="col">Conceder até</th>
+              <th scope="col">Últimas férias</th>
+              <th scope="col">Admissão</th>
+              <th scope="col">Situação</th>
+              <th scope="col">Mês desejado</th>
+              <th scope="col">Conflito</th>
+              <th scope="col" class="num">Salário base</th>
+              <th scope="col" class="num" title="1/3 constitucional = Salário base ÷ 3">1/3 férias</th>
+              <th scope="col" class="num" title="Previsão bruta — salário + 1/3. Sem INSS, IRRF, médias, horas extras, adicionais ou comissões.">Previsão bruta</th>
+            </tr>
+          </thead>
+          <tbody id="tabela-corpo"></tbody>
+        </table>
+      </div>
+      <p id="vazio" class="vazio" hidden>Nenhum período aquisitivo encontrado.</p>
+    </section>
+
+    <section class="tabela-secao dist" aria-labelledby="dist-loja-titulo">
+      <h2 id="dist-loja-titulo">Distribuição por loja</h2>
+      <p class="contagem">Acompanha os filtros.</p>
+      <div class="dist__grade">
+        <div class="tabela-rolagem tabela-rolagem--resumo">
+          <table class="resumo">
+            <thead>
+              <tr>
+                <th scope="col">Loja</th>
+                <th scope="col">Total</th>
+                <th scope="col">Vencidas</th>
+                <th scope="col">Até 30 dias</th>
+                <th scope="col">31 a 60 dias</th>
+                <th scope="col">Mais de 60 dias</th>
+              </tr>
+            </thead>
+            <tbody id="resumo-loja-corpo"></tbody>
+          </table>
+        </div>
+        <div class="graf" role="img" aria-label="Gráfico de barras empilhadas: situação dos períodos por loja (mesmos números da tabela)">
+          <div class="legenda" id="grafico-loja-legenda"></div>
+          <div id="grafico-loja"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="tabela-secao dist" aria-labelledby="dist-ano-titulo">
+      <h2 id="dist-ano-titulo">Distribuição por ano</h2>
+      <p class="contagem">Ano do limite (<code>DT_LIMITE</code>) — acompanha os filtros.</p>
+      <div class="dist__grade">
+        <div class="tabela-rolagem tabela-rolagem--resumo">
+          <table class="resumo">
+            <thead>
+              <tr>
+                <th scope="col">Ano</th>
+                <th scope="col">Total</th>
+                <th scope="col">Vencidas</th>
+                <th scope="col">Até 30 dias</th>
+                <th scope="col">31 a 60 dias</th>
+                <th scope="col">Mais de 60 dias</th>
+              </tr>
+            </thead>
+            <tbody id="resumo-ano-corpo"></tbody>
+          </table>
+        </div>
+        <div class="graf" role="img" aria-label="Gráfico de barras: total de períodos aquisitivos por ano do limite">
+          <div id="grafico-ano"></div>
+        </div>
+      </div>
+      <p id="resumo-nota" class="contagem" hidden></p>
+    </section>
+  </main>
+
+  <script src="data/ferias.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/filters.js"></script>
+  <script src="js/render.js"></script>
+  <script src="js/script.js"></script>
+</body>
+</html>
