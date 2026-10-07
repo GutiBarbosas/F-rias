@@ -15,7 +15,8 @@ Conversões técnicas:
 - texto que não seja uma data válida, nos campos de data, vira vazio (null);
 - "Salário Base" permanece NÚMERO (ex.: 1800 ou 1800.5), sem formatação; vazio ou valor que não seja
   número (ou seja negativo) vira null e é listado no final;
-- "DESEJO" permanece como texto exatamente como está na planilha (vazio ou "-" vira null).
+- "DESEJO" é data completa: vira AAAA-MM-DD (ex.: 01/10/2026 -> 2026-10-01); vazio, "-" ou inválida vira null.
+- o cabeçalho é localizado automaticamente (pode não estar na linha 1) e COLABORADOR2 é aceito como COLABORADOR.
 Cada caso de data inválida é listado no final para que a planilha possa ser corrigida.
 """
 import datetime
@@ -29,7 +30,8 @@ ABA = "BASE"
 CAMPOS = ["COLABORADOR", "LOJA", "AQUISITIVO 1", "AQUISITIVO 2", "DT_LIMITE",
           "FUNÇÃO", "ADMISSÃO", "I_FÉRIAS", "F_FÉRIAS", "Salário Base", "DESEJO"]
 CAMPOS_NUMERO = ("Salário Base",)
-CAMPOS_DATA = ("AQUISITIVO 1", "AQUISITIVO 2", "DT_LIMITE", "ADMISSÃO", "I_FÉRIAS", "F_FÉRIAS")
+CAMPOS_DATA = ("AQUISITIVO 1", "AQUISITIVO 2", "DT_LIMITE", "ADMISSÃO", "I_FÉRIAS", "F_FÉRIAS", "DESEJO")
+ALIAS = {"COLABORADOR2": "COLABORADOR"}  # nome alternativo da coluna na planilha
 ERROS_EXCEL = {"#N/A", "#REF!", "#VALUE!", "#DIV/0!", "#NAME?", "#NULL!", "#NUM!"}
 VAZIOS = {"", "-", "—"}
 
@@ -42,7 +44,9 @@ if ABA not in wb.sheetnames:
 linhas = list(wb[ABA].iter_rows(values_only=True))
 if not linhas:
     sys.exit("A aba BASE está vazia.")
-cabecalho = [str(c).strip() if c is not None else "" for c in linhas[0]]
+# localiza a linha de cabeçalho (primeira que contém LOJA); colunas vazias à esquerda são aceitas
+n_cab = next((k for k, l in enumerate(linhas) if "LOJA" in [str(c).strip() for c in l if c is not None]), 0)
+cabecalho = [ALIAS.get(str(c).strip(), str(c).strip()) if c is not None else "" for c in linhas[n_cab]]
 
 faltando = [c for c in CAMPOS if c not in cabecalho]
 if faltando:
@@ -66,8 +70,12 @@ def converter_data(v):
         except (OverflowError, ValueError):
             return None
     if isinstance(v, str):
+        t = v.strip()
+        m = re.fullmatch(r"(\d{1,2})/(\d{1,2})/(\d{4})", t)  # dd/mm/aaaa
         try:
-            return datetime.date.fromisoformat(v.strip()[:10]).strftime("%Y-%m-%d")
+            if m:
+                return datetime.date(int(m[3]), int(m[2]), int(m[1])).strftime("%Y-%m-%d")
+            return datetime.date.fromisoformat(t[:10]).strftime("%Y-%m-%d")
         except ValueError:
             return None
     return None
@@ -106,7 +114,7 @@ def campo(c, v, n):
 
 registros = [
     {c: campo(c, l[i], n) for c, i in indices.items()}
-    for n, l in enumerate(linhas[1:], start=2) if any(v is not None for v in l)
+    for n, l in enumerate(linhas[n_cab + 1:], start=n_cab + 2) if any(v is not None for v in l)
 ]
 
 with open(destino, "w", encoding="utf-8") as f:
