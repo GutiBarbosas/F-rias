@@ -1,0 +1,149 @@
+:root{
+  color-scheme:light dark;
+  --bg:#eceff3; --card:#ffffff; --texto:#1b2430; --suave:#5b6675; --borda:#d3d9e1;
+  --primaria:#2b5a85; --primaria-clara:#e3ecf5; --sombra:0 1px 2px rgba(16,24,40,.06);
+  --raio:8px;
+  --topo-bg:#141b24; --topo-borda:#0e131a; --topo-texto:#e8ecf2; --topo-suave:#9aa6b6;
+  --cab-bg:#1f2b3a; --cab-texto:#e8ecf2; --linha-alt:#f5f7fa;
+  --c-conflito:#9a6a00; --c-vencida:#b4372d; --c-ate30:#c46a10; --c-d31a60:#a68a0a; --c-mais60:#2f7d52; --c-sem:#7b8594;
+}
+@media (prefers-color-scheme:dark){
+  :root{--bg:#0d1218; --card:#151c25; --texto:#e4e8ee; --suave:#97a2b1; --borda:#2b3644;
+        --primaria:#7fa6cc; --primaria-clara:#1b2838; --sombra:none;
+        --topo-bg:#10161d; --topo-borda:#2b3644; --topo-texto:#e8ecf2; --topo-suave:#8f9bab;
+        --cab-bg:#1d2836; --cab-texto:#e8ecf2; --linha-alt:#18212c;
+        --c-conflito:#e0b04a; --c-vencida:#e0705f; --c-ate30:#e39a4b; --c-d31a60:#d4b94a; --c-mais60:#5fb583; --c-sem:#8b96a5;}
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;background:var(--bg);color:var(--texto)}
+.topo{background:var(--topo-bg);border-bottom:1px solid var(--topo-borda)}
+.topo__conteudo{max-width:1280px;margin:0 auto;padding:22px 20px}
+.topo h1{margin:0;font-size:1.5rem;color:var(--topo-texto)}
+.topo p{margin:4px 0 0;color:var(--topo-suave);font-size:.95rem}
+.container{max-width:1280px;margin:0 auto;padding:20px}
+
+/* Áreas reservadas (indicadores e filtros) */
+.reservado{background:var(--card);border:1px dashed var(--borda);border-radius:var(--raio);padding:16px;margin-bottom:16px}
+.reservado h2{margin:0 0 4px;font-size:1.05rem}
+.reservado p{margin:0;color:var(--suave);font-size:.88rem}
+
+/* Tabela de férias */
+.tabela-secao{background:var(--card);border:1px solid var(--borda);border-radius:var(--raio);padding:16px;box-shadow:var(--sombra)}
+.tabela-secao h2{margin:0;font-size:1.05rem}
+.contagem{margin:4px 0 12px;color:var(--suave);font-size:.88rem}
+.tabela-rolagem{overflow-x:auto;border:1px solid var(--borda);border-radius:6px;max-height:70vh;overflow-y:auto}
+.tabela{width:100%;border-collapse:collapse;font-size:.88rem;min-width:1180px}
+.tabela th{position:sticky;top:0;z-index:1;background:var(--cab-bg);color:var(--cab-texto);text-align:left;
+  font-size:.75rem;font-weight:600;text-transform:uppercase;letter-spacing:.04em;padding:10px 12px;white-space:nowrap}
+.tabela td{padding:9px 12px;border-top:1px solid var(--borda);white-space:nowrap}
+.tabela tbody tr:nth-child(even){background:var(--linha-alt)}
+.tabela tbody tr:hover{background:var(--primaria-clara)}
+.tabela td:first-child{font-weight:600}
+.vazio{text-align:center;color:var(--suave);padding:40px 0;margin:0}
+
+/* Filtros */
+.filtros{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;align-items:end;
+  background:var(--card);border:1px solid var(--borda);border-radius:var(--raio);padding:16px;margin-bottom:16px;box-shadow:var(--sombra)}
+.campo{min-width:0}
+.campo--busca{grid-column:1/-1}
+.campo label{display:block;font-size:.75rem;font-weight:600;color:var(--suave);margin-bottom:5px;text-transform:uppercase;letter-spacing:.04em}
+input,select,.btn{width:100%;max-width:100%;height:42px;padding:0 12px;font:inherit;font-size:.95rem;color:var(--texto);
+  background:var(--bg);border:1px solid var(--borda);border-radius:6px}
+input:focus,select:focus,.btn:focus-visible{outline:2px solid var(--primaria);outline-offset:1px}
+.btn{cursor:pointer;font-weight:600;background:var(--primaria-clara);color:var(--primaria);border-color:transparent}
+.btn:hover{filter:brightness(.96)}
+@media(min-width:900px){.campo--busca{grid-column:span 2}}
+
+/* Indicadores (etapa 3) */
+.indicadores{margin-bottom:16px}
+.indicadores__cab{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:4px 12px;margin-bottom:8px}
+.indicadores__cab h2{margin:0;font-size:1.05rem}
+.data-ref{color:var(--suave);font-size:.82rem}
+.cards{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+@media(min-width:640px){.cards{grid-template-columns:repeat(3,1fr)}}
+@media(min-width:1000px){.cards{grid-template-columns:repeat(7,1fr)}}
+.card{display:flex;flex-direction:column;gap:2px;min-width:0;text-align:left;font:inherit;color:var(--texto);
+  background:var(--card);border:1px solid var(--borda);border-left:4px solid var(--primaria);border-radius:var(--raio);
+  padding:10px 12px;box-shadow:var(--sombra)}
+.card__rotulo{font-size:.72rem;font-weight:600;color:var(--suave);text-transform:uppercase;letter-spacing:.04em}
+.card__valor{font-size:1.6rem;line-height:1.2;font-weight:700}
+button.card{cursor:pointer;width:auto;height:auto}
+button.card:hover{background:var(--primaria-clara)}
+button.card:focus-visible{outline:2px solid var(--primaria);outline-offset:1px}
+button.card[aria-pressed="true"]{background:var(--primaria-clara);box-shadow:0 0 0 2px var(--primaria)}
+.card--vencidas{border-left-color:var(--c-vencida)}
+.card--ate30{border-left-color:var(--c-ate30)}
+.card--d31a60{border-left-color:var(--c-d31a60)}
+.card--mais60{border-left-color:var(--c-mais60)}
+.card--vencidas .card__valor{color:var(--c-vencida)}
+
+/* Situação na tabela */
+.sit{display:inline-flex;align-items:center;gap:7px;font-weight:600}
+.sit__ponto{width:9px;height:9px;border-radius:50%;background:var(--c-sem);flex:none}
+.sit--vencida .sit__ponto{background:var(--c-vencida)}
+.sit--ate30 .sit__ponto{background:var(--c-ate30)}
+.sit--d31a60 .sit__ponto{background:var(--c-d31a60)}
+.sit--mais60 .sit__ponto{background:var(--c-mais60)}
+.sit--sem{font-weight:400;color:var(--suave)}
+
+/* Ajuste da tabela com a coluna Situação: cabe em ~1280px sem rolagem lateral (Função pode quebrar linha) */
+.tabela th,.tabela td{padding-left:10px;padding-right:10px}
+.tabela td:nth-child(3){white-space:normal;min-width:120px;max-width:170px}
+
+/* Distribuição por loja e por ano (etapa 4) */
+.dist{margin-top:16px}
+.dist code{font-size:.85em}
+.dist__grade{display:grid;grid-template-columns:minmax(0,1fr);gap:16px;align-items:start}
+@media(min-width:1000px){.dist__grade{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}}
+.tabela-rolagem--resumo{max-height:640px}
+.resumo{width:100%;border-collapse:collapse;font-size:.88rem}
+.resumo thead th{position:sticky;top:0;z-index:1;background:var(--cab-bg);color:var(--cab-texto);text-align:right;
+  font-size:.75rem;font-weight:600;text-transform:uppercase;letter-spacing:.04em;padding:10px 12px;white-space:nowrap}
+.resumo thead th:first-child,.resumo tbody th{text-align:left}
+.resumo td,.resumo tbody th{padding:8px 12px;border-top:1px solid var(--borda);white-space:nowrap;font-variant-numeric:tabular-nums}
+.resumo td{text-align:right}
+.resumo tbody th{font-weight:600}
+.resumo tbody tr:nth-child(even){background:var(--linha-alt)}
+.resumo tbody tr:hover{background:var(--primaria-clara)}
+/* Gráficos de barras em CSS puro (sem biblioteca); as larguras vêm dos mesmos agregados das tabelas */
+.graf{min-width:0}
+.legenda{display:flex;flex-wrap:wrap;gap:4px 14px;margin-bottom:10px;font-size:.78rem;color:var(--suave)}
+.legenda__item{display:inline-flex;align-items:center;gap:6px}
+.graf__linha{display:grid;grid-template-columns:62px minmax(0,1fr) 34px;align-items:center;gap:8px;padding:3px 0;font-size:.8rem}
+.graf__rotulo{color:var(--suave);white-space:nowrap}
+.graf__valor{font-weight:600;font-variant-numeric:tabular-nums;text-align:right}
+.graf__trilho{min-width:0;height:16px}
+.graf__barra{display:flex;height:100%;gap:1px;border-radius:3px;overflow:hidden}
+.seg{display:inline-block;min-width:3px;background:var(--c-sem)}
+.legenda .seg{width:10px;height:10px;border-radius:2px}
+.seg--vencida{background:var(--c-vencida)}
+.seg--ate30{background:var(--c-ate30)}
+.seg--d31a60{background:var(--c-d31a60)}
+.seg--mais60{background:var(--c-mais60)}
+.seg--total{background:var(--primaria)}
+
+/* Colunas Mês desejado / Salário base (etapa 5) */
+.tabela th.num,.tabela td.num{text-align:right;font-variant-numeric:tabular-nums}
+
+/* Conflitos de programação (etapa 6): alerta discreto, não é erro */
+.card--conflito{border-left-color:var(--c-conflito)}
+.conflitos{margin-bottom:16px}
+.conflitos code{font-size:.85em}
+.conflitos .tabela-rolagem--resumo{max-height:360px}
+.conflitos .resumo thead th{text-align:left}
+.conflitos .resumo thead th:last-child,.conflitos .resumo td:last-child{text-align:right}
+.conflitos .resumo td{text-align:left}
+.conflitos .resumo td.conflitos__nomes{white-space:normal;min-width:220px}
+.vazio--conflitos{padding:14px 0 4px;text-align:left}
+.conflito{color:var(--c-conflito);font-weight:600}
+.tabela tbody tr.linha--conflito{background:color-mix(in srgb,var(--c-conflito) 9%,transparent)}
+.tabela tbody tr.linha--conflito:hover{background:color-mix(in srgb,var(--c-conflito) 16%,transparent)}
+.tabela tbody tr.linha--conflito td:first-child{box-shadow:inset 3px 0 0 var(--c-conflito)}
+.tabela{min-width:1280px}
+
+/* Previsão bruta (etapa 6.2) */
+.tabela{min-width:1480px}
+.card--previsao{margin-top:10px}
+.card--previsao .card__valor{font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.card__nota{font-size:.78rem;color:var(--suave);line-height:1.35}
+.contagem--nota{margin-top:2px}
