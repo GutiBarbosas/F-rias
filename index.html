@@ -71,6 +71,8 @@
         <select id="f-conflito"><option value="">Todos</option><option value="com">Com conflito</option><option value="sem">Sem conflito</option></select>
       </div>
       <button id="limpar" class="btn" type="button">Limpar filtros</button>
+      <button id="importar" class="btn" type="button">Importar Excel</button>
+      <input id="importar-arquivo" type="file" accept=".xlsx" hidden>
     </section>
 
     <section class="tabela-secao" aria-labelledby="tabela-titulo">
@@ -155,10 +157,12 @@
     </section>
   </main>
 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <script src="data/ferias.js"></script>
   <script src="js/utils.js"></script>
   <script src="js/filters.js"></script>
   <script src="js/render.js"></script>
+  <script src="js/importar.js"></script>
   <script src="js/script.js"></script>
 </body>
 </html>
